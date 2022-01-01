@@ -1,0 +1,15 @@
+[package]
+name = "dotenv-build"
+description = "Crate to help you supply compile time environment variables from your .env file"
+version = "0.1.0"
+authors = ["Atrox <hello@atrox.dev>"]
+edition = "2018"
+license = "MIT"
+repository = "https://github.com/atrox/dotenv-build"
+homepage = "https://github.com/atrox/dotenv-build"
+categories = ["config", "development-tools::build-utils"]
+keywords = ["environment", "env", "dotenv", "settings", "config"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
