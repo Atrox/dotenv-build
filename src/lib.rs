@@ -42,14 +42,42 @@
 //! ### Configuration
 //!
 //! Read more about the available options here: [`Config`]
-//! ```ignore
+//! ```
 //! let config = dotenv_build::Config {
-//!   recursive_search: false,
-//!   fail_if_missing_dotenv: true,
-//!    ..Default::default()
+//!     filename: std::path::Path::new(".env.other"),
+//!     recursive_search: false,
+//!     fail_if_missing_dotenv: false,
+//!     ..Default::default()
 //! };
 //!
 //! dotenv_build::output(config).unwrap();
+//! ```
+//!
+//! ## Multiple files
+//! Use [`output_multiple`] for this:
+//!
+//! ```
+//! use std::path::Path;
+//!
+//! use dotenv_build::Config;
+//!
+//! let configs = vec![
+//!     // load .env.base
+//!     Config {
+//!         filename: Path::new(".env.base"),
+//!         // fail_if_missing_dotenv: true,
+//!         ..Default::default()
+//!     },
+//!     // load .env.staging
+//!     Config {
+//!         filename: Path::new(".env.staging"),
+//!         ..Default::default()
+//!     },
+//!     // load .env
+//!     Config::default(),
+//! ];
+//!
+//! dotenv_build::output_multiple(configs).unwrap();
 //! ```
 
 mod errors;
@@ -88,6 +116,10 @@ impl<'a> Default for Config<'a> {
 ///
 /// ## Example
 ///
+/// ```
+/// dotenv_build::output(dotenv_build::Config::default()).unwrap();
+/// ```
+///
 /// _.env_:
 /// ```text
 /// RUST_LOG=debug
@@ -108,6 +140,41 @@ impl<'a> Default for Config<'a> {
 /// ```
 pub fn output(config: Config) -> Result<()> {
     output_write_to(config, &mut io::stdout())
+}
+
+/// Same as [`output`] but to read multiple files
+///
+/// ## Example
+///
+/// ```
+/// use std::path::Path;
+///
+/// use dotenv_build::Config;
+///
+/// let configs = vec![
+///     // load .env.base
+///     Config {
+///         filename: Path::new(".env.base"),
+///         // fail_if_missing_dotenv: true,
+///         ..Default::default()
+///     },
+///     // load .env.staging
+///     Config {
+///         filename: Path::new(".env.staging"),
+///         ..Default::default()
+///     },
+///     // load .env
+///     Config::default(),
+/// ];
+///
+/// dotenv_build::output_multiple(configs).unwrap();
+/// ```
+pub fn output_multiple(configs: Vec<Config>) -> Result<()> {
+    for config in configs {
+        output_write_to(config, &mut io::stdout())?;
+    }
+
+    Ok(())
 }
 
 fn output_write_to<T>(config: Config, stdout: &mut T) -> Result<()>
