@@ -92,6 +92,7 @@ use std::path::Path;
 use crate::errors::*;
 
 /// Config for [`output`]
+#[derive(Debug)]
 pub struct Config<'a> {
     /// The filename that is getting read for the environment variables. Defaults to `.env`
     pub filename: &'a Path,
@@ -185,7 +186,10 @@ where
         Ok(res) => res,
         Err(err) if err.not_found() => {
             return if config.fail_if_missing_dotenv {
-                eprintln!("[dotenv-build] .env file not found, err: {}", err);
+                eprintln!(
+                    "[dotenv-build] {:?} file not found, err: {}",
+                    config.filename, err
+                );
                 Err(err)
             } else {
                 Ok(())
